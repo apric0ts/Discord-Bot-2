@@ -35,7 +35,7 @@ async def halp(context):
     helpEmbed.add_field(name = 'shane ban @user', value = 'doesn\'t actually ban XD')
     helpEmbed.add_field(name = 'shane dm @user <message>', value = 'messages specified user')
     helpEmbed.add_field(name = 'shane say <message>', value = 'repeats specified messages')
-    helpEmbed.add_field(name = 'shane snipe <message>', value = 'sends the last deleted message')
+    helpEmbed.add_field(name = 'shane snipe', value = 'sends the last deleted message')
 
     
     helpEmbed.set_footer(text='official bot of the Bubs server!')
@@ -61,7 +61,7 @@ async def version(context):
 #region DEL COMMAND
 @client.command(name='del')
 #@commands.has_permissions(manage_messages=True)
-@commands.has_any_role('OWNER', 'austin', 'Moderator','smallest pp', 'admin','Magenta')
+@commands.has_any_role('OWNER','Magenta')
 async def dele(context, amount=5):
     try:
         await context.channel.purge(limit=amount+1)
@@ -77,14 +77,18 @@ async def dele(context, amount=5):
 
 #region FAKEBAN COMMAND
 @client.command(name='ban')
-async def ban(context, member: discord.Member):
-    
-    banEmbed = discord.Embed(color = member.color, timestamp = context.message.created_at)
-    banEmbed.set_author(name = f'User banned: {member} \n\nNickname: {member.display_name}')
-    banEmbed.set_thumbnail(url = member.avatar_url)
-    banEmbed.set_footer(text = f'Authorized by: {context.author}', icon_url = context.author.avatar_url)
 
-    await context.message.channel.send(embed=banEmbed)
+@commands.has_any_role('BUB')
+async def ban(context, member: discord.Member):
+    try:
+        banEmbed = discord.Embed(color = member.color, timestamp = context.message.created_at)
+        banEmbed.set_author(name = f'User banned: {member} \n\nNickname: {member.display_name}')
+        banEmbed.set_thumbnail(url = member.avatar_url)
+        banEmbed.set_footer(text = f'Authorized by: {context.author}', icon_url = context.author.avatar_url)
+
+        await context.message.channel.send(embed=banEmbed)
+    except:
+        await context.message.channel.send('You need bub role in order to ban, smh.')
 #endregion
 
 #region USERINFO COMMAND
@@ -108,12 +112,20 @@ async def userinfo(context, member: discord.Member):
     await context.message.channel.send(embed=userinfoEmbed)
 #endregion
 
-
+#region SAY COMMAND
+@client.command(name='say')
+async def say(ctx, *, arg):
+    try:
+        await ctx.message.delete()
+        await ctx.send(arg)
+    except:
+        await ctx.message.channel.send('sorry :/ i don\'t have permission to read messages...')
+#endregion
 
 #region DM COMMAND
 @client.command(name='dm')
 #@commands.has_permissions(manage_messages=True)
-async def say(context, member : discord.Member, *, arg):
+async def dm(context, member : discord.Member, *, arg):
     try:
         #sends arg to specified member
         await member.send(arg)
@@ -148,8 +160,11 @@ async def on_message_delete(message):
     deletedMessageChannel = str(message.channel)
 
 
-    #msg = str(message.author)+ 'deleted message in '+str(message.channel)+': '+str(message.content)
-    #print(msg)
+    msg = str(message.author)+ ' deleted message in '+str(message.channel)+': '+str(message.content)
+    print(msg)
+
+    deletedMessageLogs = client.get_channel(799080817116577823)
+    await deletedMessageLogs.send(msg)
 
 @client.command(name = 'snipe')
 async def snipe(context):
@@ -200,4 +215,4 @@ async def on_ready(message): #when bot starts up
 
 
 # Run the client on the server
-client.run('ODAzNjE2MDQyMjEwNDI2OTAx.YBAXwg.PgPWgKURT9AI5pBOX5meEXy3XRI')
+client.run('ODAzNjE2MDQyMjEwNDI2OTAx.YBAXwg.-C5y5yxQW9ydcNhyw-mlV7AxpqI')
